@@ -18,6 +18,24 @@ var badlines = fs.createWriteStream('JSON/Theft/badlineread.json');
 var count = 0;
 var corrupted=0;
 var scavangedbrokenlines =0;
+function datainputtheft(array, year) {
+    if(array[5]=="THEFT"){	
+    	if((array[6]=="$500 AND UNDER")||(array[6]=="FINANCIAL ID THEFT:$300 &UNDER")||(array[6]=="PURSE-SNATCHING")||(array[6]=="POCKET-PICKING")||(array[6]=="ATTEMPT THEFT")||(array[6]=="FROM BUILDING")||(array[6]=="RETAIL THEFT"))
+    	{	
+    		var final = {"ID":array[0], "YEAR" :year , "ABOVE500": 0 } ;
+    		counterzero[year-2001] += 1;
+    	}
+    	else
+    	{	
+    		var final = {"ID":array[0], "YEAR" :year , "ABOVE500": 1 } ;
+    		counterone[year-2001] += 1;
+    	}
+    	countertotal[year-2001] += 1;
+		outstream.write(JSON.stringify(final, null, 2),'UTF8')                             //FINAL :WRITE TO FILE : UNQUOTE
+		count+=1
+		console.log(final);																	//FINAL :WRITE TO CONSOLE : UNQUOTE																						
+		}
+}
 instream.setEncoding('UTF8');			//Setting encoding
 instream.on('data', function(chunk){
 	let data = '';
@@ -26,109 +44,50 @@ instream.on('data', function(chunk){
 		.split('\n') 					//Splitting data line by line
 		.map(line => line.split('\t'))  //Splitting data by tab
 		.map(line => {
-			
 			let array = line[0].split(','); //Splitting columns
 			var yearcol = array.length -6;
 			var year = parseInt(array[yearcol])
-			//Broken Line correction
-			if((typeof year == 'undefined')||(!((year<2017)&&(year>2000))))
+			totaldata+=1
+			
+			if((typeof year == 'undefined')||(!((year<2017)&&(year>2000))))	//Broken Line correction
 			{	var i
-				//console.log(year)
-				count+=1
-				for(i =0; i<5; i++)
-				{
+				for(i =0; i<5; i++){
 					yearcol+=1;
 					year = parseInt(array[yearcol])
 					if((year<2017)&&(year>2000)){break;}
 				}
 				if(!((year<2017)&&(year>2000))){
-
-						
-						//console.log("Not Corrected"+ year)
-						for(i =(array.length - 5); i>0; i--)
-							{
+						for(i =(array.length - 5); i>0; i--){
 								yearcol-=1;
 								year = parseInt(array[yearcol])
 								if((year<2017)&&(year>2000)){break;}
 							}
 						if(!((year<2017)&&(year>2000)))
-							{
-						 	badlines.write(JSON.stringify([line]));
+						 	{badlines.write(JSON.stringify([line]));
 						 	if(array.length>4)
-						 	{	
-						 		//Year Extraction
-						 		var tsc = array[2]
+						 	{	var tsc = array[2]							//Year Extraction
 						 		var arraytsc = tsc.split(" ")
-						 		
 						 		if(typeof arraytsc[2] !== 'undefined')
 						 		{
 						 				var arraydate = arraytsc[0].split("/")
 						 				year = arraydate[2]
-						 				//console.log(year)
-
 						 				//For THEFT
 						 				{
-						 					if((typeof array[5] !== 'undefined')&&(array[5]=='THEFT')&&(typeof array[6] !== 'undefined'))
-						 					{	Y=year;
-						 						{	
-													if((array[6]=="$500 AND UNDER")||(array[6]=="FINANCIAL ID THEFT:$300 &UNDER")||(array[6]=="PURSE-SNATCHING")||(array[6]=="POCKET-PICKING")||(array[6]=="ATTEMPT THEFT")||(array[6]=="FROM BUILDING")||(array[6]=="RETAIL THEFT"))
-													{	
-														var final = {"ID":array[0], "YEAR" :year , "ABOVE500": 0 } ;
-														counterzero[year-2001] += 1;
-													}
-													else
-													{	
-														var final = {"ID":array[0], "YEAR" :year , "ABOVE500": 1 } ;
-														counterone[year-2001] += 1;
-						 							}
-													countertotal[year-2001] += 1;
-													outstream.write(JSON.stringify(final, null, 2),'UTF8')                             //FINAL :WRITE TO FILE : UNQUOTE
-													scavangedbrokenlines+=1;
-													console.log(final);																	//FINAL :WRITE TO CONSOLE : UNQUOTE
-											}
-						 					}
-						 					else {corrupted+=1}
+						 					if((typeof array[5] !== 'undefined')&&(typeof array[6] !== 'undefined'))
+						 					{	
+						 						datainputtheft(array,year) 
+						 					}else {corrupted+=1}
 						 				}	
 						 		}
 						 		else
-						 		{
-						 			corrupted+=1;
-						 		}
-
-						 	}
-						 	
-						 }
-						}
-			}
-
-
-
-			//For normal lines
-		else if ((year>2000)&&(year<2017))
-			 {if(array[5]=="THEFT")			//Filter 
-			{	
-				if((array[6]=="$500 AND UNDER")||(array[6]=="FINANCIAL ID THEFT:$300 &UNDER")||(array[6]=="PURSE-SNATCHING")||(array[6]=="POCKET-PICKING")||(array[6]=="ATTEMPT THEFT")||(array[6]=="FROM BUILDING")||(array[6]=="RETAIL THEFT"))
-					{	
-						var final = {"ID":array[id], "YEAR" :year , "ABOVE500": 0 } ;
-						counterzero[year-2001] += 1;
-							}
-				else
-					{	
-						var final = {"ID":array[id], "YEAR" :year , "ABOVE500": 1 } ;
-						counterone[year-2001] += 1;
-						 }
-				countertotal[year-2001] += 1;
-				outstream.write(JSON.stringify(final, null, 2),'UTF8')                             //FINAL :WRITE TO FILE : UNQUOTE
-				//console.log(final);																	//FINAL :WRITE TO CONSOLE : UNQUOTE
-			}}
-			totaldata+=1;
-		})
-
-
-})
+						 		{	corrupted+=1;}						 		
+						 	}}}}
+		else if ((year>2000)&&(year<2017)) //For normal lines
+			 datainputtheft(array,year)
+		})})
  		.on('end', function(){
  			var TOTALCOUNT=0;
- 			var title = "Total Count\tLess than $500\tMore than $500";
+ 			var title = ["Total Count"+"Less than $500"+"More than $500"];
  			//outstreamgraph.write(title);
  			//outstreamgraph.write()
  			for(var k =0 ; k<16; k++)
@@ -137,12 +96,5 @@ instream.on('data', function(chunk){
  				console.log(title);
  				outstreamgraph.write(JSON.stringify(title, null, 2),'UTF8');
  				TOTALCOUNT+=countertotal[k];
- 			}
- 			console.log("Uncounted : "+ uncount);
- 			console.log("Total Counted : "+ TOTALCOUNT);
- 			console.log("Total Records Checked : "+ totaldata);
- 			//console.log(/*"Beforecc"+beforeCC+*/"  AfterCC"+afterCC);	
- 			console.log("Year at incorrect location : "+count)
-			console.log("Scavanged Broken Lsines"+scavangedbrokenlines)
-			console.log("Corrupted lines:"+ corrupted)
- 		})
+ 			}})
+ 		
