@@ -1,0 +1,7 @@
+> for(var i=0; i<lines.length; i++){
+... for (var j=0; j<10; j++){
+..... if(people[i][17]=='2008'){
+....... console.log(people[i][j]);}
+..... }console.log('\n');
+... }
+
