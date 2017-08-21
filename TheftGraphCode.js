@@ -5,30 +5,19 @@ let countertotal= new Array(16);  //Counter array for total Thefts in correspond
 let counterone= new Array(16);	  //Counter array for Thefts more than $500 in corresponding year
 let counterzero= new Array(16);	  //Counter array for Thefts less than $500 in corresponding year
 let totaldata=0;				  //Counter array for total records parsed
-var array ;
-let final;
-let year;
-let timestamp='';
 let id=0;
 for (j = 0; j<16; j++)				//Initializing Counter array
     {	countertotal[j]=0;
     	counterone[j]=0;
     	counterzero[j]=0;
     }
-let beforeCC=0;
-let afterCC=0;
-var instream = fs.createReadStream('../crimedata.csv');					//Starting Instream
-var outstream = fs.createWriteStream('crimedatatheft-year-count.json');	//Starting Outstreams
-var outstreamgraph = fs.createWriteStream('crimedatatheft-year-count-graph.json');
-var badlines = fs.createWriteStream('badlineread.json');
+var instream = fs.createReadStream('crimedata.csv');					//Starting Instream
+var outstream = fs.createWriteStream('JSON/Theft/crimedatatheft-year-count.json');	//Starting Outstreams
+var outstreamgraph = fs.createWriteStream('JSON/Theft/crimedatatheft-year-count-graph.json');
+var badlines = fs.createWriteStream('JSON/Theft/badlineread.json');
 var count = 0;
-var count1 = 0;
-var count2 = 0;
-var count3 = 0;
 var corrupted=0;
 var scavangedbrokenlines =0;
-var cor1=0;
-
 instream.setEncoding('UTF8');			//Setting encoding
 instream.on('data', function(chunk){
 	let data = '';
@@ -38,7 +27,7 @@ instream.on('data', function(chunk){
 		.map(line => line.split('\t'))  //Splitting data by tab
 		.map(line => {
 			
-			array = line[0].split(','); //Splitting columns
+			let array = line[0].split(','); //Splitting columns
 			var yearcol = array.length -6;
 			var year = parseInt(array[yearcol])
 			//Broken Line correction
@@ -54,7 +43,7 @@ instream.on('data', function(chunk){
 				}
 				if(!((year<2017)&&(year>2000))){
 
-						count1+=1;
+						
 						//console.log("Not Corrected"+ year)
 						for(i =(array.length - 5); i>0; i--)
 							{
@@ -63,7 +52,7 @@ instream.on('data', function(chunk){
 								if((year<2017)&&(year>2000)){break;}
 							}
 						if(!((year<2017)&&(year>2000)))
-							{count3+=1
+							{
 						 	badlines.write(JSON.stringify([line]));
 						 	if(array.length>4)
 						 	{	
@@ -84,12 +73,12 @@ instream.on('data', function(chunk){
 						 						{	
 													if((array[6]=="$500 AND UNDER")||(array[6]=="FINANCIAL ID THEFT:$300 &UNDER")||(array[6]=="PURSE-SNATCHING")||(array[6]=="POCKET-PICKING")||(array[6]=="ATTEMPT THEFT")||(array[6]=="FROM BUILDING")||(array[6]=="RETAIL THEFT"))
 													{	
-														final = {"ID":array[0], "YEAR" :year , "ABOVE500": 0 } ;
+														var final = {"ID":array[0], "YEAR" :year , "ABOVE500": 0 } ;
 														counterzero[year-2001] += 1;
 													}
 													else
 													{	
-														final = {"ID":array[0], "YEAR" :year , "ABOVE500": 1 } ;
+														var final = {"ID":array[0], "YEAR" :year , "ABOVE500": 1 } ;
 														counterone[year-2001] += 1;
 						 							}
 													countertotal[year-2001] += 1;
@@ -99,8 +88,7 @@ instream.on('data', function(chunk){
 											}
 						 					}
 						 					else {corrupted+=1}
-						 				}
-						 				
+						 				}	
 						 		}
 						 		else
 						 		{
@@ -121,12 +109,12 @@ instream.on('data', function(chunk){
 			{	
 				if((array[6]=="$500 AND UNDER")||(array[6]=="FINANCIAL ID THEFT:$300 &UNDER")||(array[6]=="PURSE-SNATCHING")||(array[6]=="POCKET-PICKING")||(array[6]=="ATTEMPT THEFT")||(array[6]=="FROM BUILDING")||(array[6]=="RETAIL THEFT"))
 					{	
-						final = {"ID":array[id], "YEAR" :year , "ABOVE500": 0 } ;
+						var final = {"ID":array[id], "YEAR" :year , "ABOVE500": 0 } ;
 						counterzero[year-2001] += 1;
 							}
 				else
 					{	
-						final = {"ID":array[id], "YEAR" :year , "ABOVE500": 1 } ;
+						var final = {"ID":array[id], "YEAR" :year , "ABOVE500": 1 } ;
 						counterone[year-2001] += 1;
 						 }
 				countertotal[year-2001] += 1;
@@ -155,10 +143,6 @@ instream.on('data', function(chunk){
  			console.log("Total Records Checked : "+ totaldata);
  			//console.log(/*"Beforecc"+beforeCC+*/"  AfterCC"+afterCC);	
  			console.log("Year at incorrect location : "+count)
-			console.log("Corrected after shifting Year cursor forward : "+cor1)
-			console.log("Not corrected after shifting Year cursor forward : "+count1)
-			console.log("Corrected after shifting Year cursor backwards : "+count2)
-			console.log("Badlines Corrected:" + count3)
 			console.log("Scavanged Broken Lsines"+scavangedbrokenlines)
 			console.log("Corrupted lines:"+ corrupted)
  		})
