@@ -48,11 +48,9 @@ if(array[5]=="ASSAULT")
 						counterzeroassault[year-2001] += 1;}
 				else if(array[i+2]=="true"){
 						final = {"ID":array[0], "YEAR" :year , "ARREST": 1 } ;
-						counteroneassault[year-2001] += 1;
-					}/*else {console.log(array[i-1]+" : "+array[i]+" : "+i);console.log(array)}*/
+						counteroneassault[year-2001] += 1;}/*else {console.log(array[i-1]+" : "+array[i]+" : "+i);console.log(array)}*/
 				outstreamassault.write(JSON.stringify(final, null, 2),'UTF8')
-				countertotalassault[year-2001] += 1;							}
-}
+				countertotalassault[year-2001] += 1;							}		}
 function datainput2015(array, year, i) {
 if(year==2015)
 			 if((array[i]=="01A")||(array[i]=="02")||(array[i]=="03")||(array[i]=="04A")||(array[i]=="04B")||(array[i]=="05")||(array[i]=="06")||(array[i]=="07")||(array[i]=="09")){
