@@ -1,19 +1,19 @@
 var fs = require('fs');
 var j =0;
 var uncount =0; //Entries Ignored
-let countertotal= new Array(16);  //Counter array for total Thefts in corresponding year 
-let counterone= new Array(16);	  //Counter array for Thefts more than $500 in corresponding year
-let counterzero= new Array(16);	  //Counter array for Thefts less than $500 in corresponding year
+let countertotalassault= new Array(16);  
+let counteroneassault= new Array(16);	  
+let counterzeroassault= new Array(16);	  
 let totaldata=0;				  //Counter array for total records parsed
 let id=0;
 for (j = 0; j<16; j++)				//Initializing Counter array
-    {	countertotal[j]=0;
-    	counterone[j]=0;
-    	counterzero[j]=0;
+    {	countertotalassault[j]=0;
+    	counteroneassault[j]=0;
+    	counterzeroassault[j]=0;
     }
-var instream = fs.createReadStream('crimedata.csv');					//Starting Instream
-var outstream = fs.createWriteStream('JSON/Assault/crimedataassault-year-count.json');	//Starting Outstreams
-var outstreamgraph = fs.createWriteStream('JSON/Assault/crimedataassault-year-count-graph.json');
+var instreamassault = fs.createReadStream('crimedata.csv');					//Starting Instream
+var outstreamassault = fs.createWriteStream('JSON/Assault/crimedataassault-year-count.json');	//Starting Outstreams
+var outstreamgraphassault = fs.createWriteStream('JSON/Assault/crimedataassault-year-count-graph.json');
 var badlines = fs.createWriteStream('JSON/Assault/badlineread.json');
 var count = 0;
 var corrupted=0;
@@ -24,22 +24,22 @@ if(array[5]=="ASSAULT")
 				if((array[8]=="false"))
 					{
 						final = {"ID":array[id], "YEAR" :year , "ARREST": 0 } ;
-						counterzero[year-2001] += 1;
+						counterzeroassault[year-2001] += 1;
 					}
 				else
 					{
 						final = {"ID":array[id], "YEAR" :year , "ARREST": 1 } ;
-						counterone[year-2001] += 1;
+						counteroneassault[year-2001] += 1;
 					}
 
-				outstream.write(JSON.stringify(final, null, 2),'UTF8')
-				countertotal[year-2001] += 1;
+				outstreamassault.write(JSON.stringify(final, null, 2),'UTF8')
+				countertotalassault[year-2001] += 1;
 				console.log(final);
 			}
 
 }
-instream.setEncoding('UTF8');			//Setting encoding
-instream.on('data', function(chunk){
+instreamassault.setEncoding('UTF8');			//Setting encoding
+instreamassault.on('data', function(chunk){
 	let data = '';
 	data +=chunk;
 	data.trim()
@@ -91,15 +91,15 @@ instream.on('data', function(chunk){
  			var TOTALCOUNT=0;
  			var TOT =0;
  			var title = "Total Count\tLess than $500\tMore than $500";
- 			//outstreamgraph.write(title);
- 			//outstreamgraph.write()
+ 			//outstreamgraphassault.write(title);
+ 			//outstreamgraphassault.write()
  			for(var k =0 ; k<16; k++)
  			{
- 				title = [countertotal[k] +"    "+counterzero[k]+"    "+ counterone[k]];
+ 				title = [countertotalassault[k] +"    "+counterzeroassault[k]+"    "+ counteroneassault[k]];
  				console.log(title);
- 				outstreamgraph.write(JSON.stringify(title, null, 2),'UTF8');
- 				TOT = TOT + counterone[k]+counterzero[k];
- 				TOTALCOUNT+=countertotal[k];
+ 				outstreamgraphassault.write(JSON.stringify(title, null, 2),'UTF8');
+ 				TOT = TOT + counteroneassault[k]+counterzeroassault[k];
+ 				TOTALCOUNT+=countertotalassault[k];
  			}
  			
  		})
