@@ -10,7 +10,7 @@ let indexcrime = 0;
 let nonindexcrime = 0;
 let propcrime =0;
 let totaldata=0;
-for ( j = 0; j<16; j++)				//Initializing Counter array
+for (var j = 0; j<16; j++)				//Initializing Counter array
     {	countertotaltheft[j]=0;
     	counteronetheft[j]=0;
     	counterzerotheft[j]=0;
@@ -22,10 +22,8 @@ var outstreamtheft = fs.createWriteStream('JSON/Theft/crimedatatheft-year-count.
 var outstreamgraphtheft = fs.createWriteStream('JSON/Theft/crimedatatheft-year-count-graph.json');
 var outstreamassault = fs.createWriteStream('JSON/Assault/crimedataassault-year-count.json');	//Starting Outstreams
 var outstreamgraphassault = fs.createWriteStream('JSON/Assault/crimedataassault-year-count-graph.json');
-var outstream2015 = fs.createWriteStream('JSON/2015/crimedata2015-year-count.json');
 var outstreamgraph2015 = fs.createWriteStream('JSON/2015/crimedata2015-year-count-graph.json');
-var badlines = fs.createWriteStream('JSON/badlineread.json');
-var corrupted=0;j=0;
+var corrupted=0;
 function datainputtheft(array, year) {
     if(array[5]=="THEFT"){	
     	if((array[6]=="$500 AND UNDER")||(array[6]=="FINANCIAL ID THEFT:$300 &UNDER")||(array[6]=="PURSE-SNATCHING")||(array[6]=="POCKET-PICKING")||(array[6]=="ATTEMPT THEFT")||(array[6]=="FROM BUILDING")||(array[6]=="RETAIL THEFT"))
@@ -35,8 +33,8 @@ function datainputtheft(array, year) {
     		var final = {"ID":array[0], "YEAR" :year , "ABOVE500": 1 } ;
     		counteronetheft[year-2001] += 1;}
     	countertotaltheft[year-2001] += 1;
-		outstreamtheft.write(JSON.stringify(final, null, 2),'UTF8') }}
-
+		outstreamtheft.write(JSON.stringify(final, null, 2),'UTF8') }
+	}
 function datainputassault(array, year,i) {
 if(array[5]=="ASSAULT")
 			{	if((array[i]=="false"))
@@ -51,20 +49,24 @@ if(array[5]=="ASSAULT")
 				else if(array[i+2]=="true"){
 						final = {"ID":array[0], "YEAR" :year , "ARREST": 1 } ;
 						counteroneassault[year-2001] += 1;
-					}else {console.log(array[i-1]+" : "+array[i]+" : "+i);console.log(array)}
+					}/*else {console.log(array[i-1]+" : "+array[i]+" : "+i);console.log(array)}*/
 				outstreamassault.write(JSON.stringify(final, null, 2),'UTF8')
 				countertotalassault[year-2001] += 1;							}
 }
-function datainput2015(array, year) {
+function datainput2015(array, year, i) {
 if(year==2015)
-			{	if((array[8]=="false"))
-					{	final = {"ID":array[0], "YEAR" :year , "ARREST": 0 } ;
-						counterzeroassault[year-2001] += 1;						}
-				else{	final = {"ID":array[0], "YEAR" :year , "ARREST": 1 } ;
-						counteroneassault[year-2001] += 1;						}
-				outstreamassault.write(JSON.stringify(final, null, 2),'UTF8')
-				countertotalassault[year-2001] += 1;
-			}
+			 if((array[i]=="01A")||(array[i]=="02")||(array[i]=="03")||(array[i]=="04A")||(array[i]=="04B")||(array[i]=="05")||(array[i]=="06")||(array[i]=="07")||(array[i]=="09")){
+               indexcrime+=1;
+            }
+    if((array[i]=="01B")||(array[i]=="08A")||(array[i]=="08B")||(array[i]=="10")||(array[i]=="11")||(array[i]=="12")||(array[i]=="13")||(array[i]=="14")||(array[i]=="15")||(array[i]=="16")||(array[i]=="17")||(array[i]=="18")||(array[i]=="19")||(array[i]=="20")||(array[i]=="22")||(array[i]=="24")||(array[i]=="26")){
+            nonindexcrime+=1;
+            }
+    if((array[i]=="01A")||(array[i]=="02")||(array[i]=="03")||(array[i]=="04A")||(array[i]=="04B")){
+            violentcrime+=1;
+            }
+    if((array[i]=="05")||(array[i]=="06")||(array[i]=="07")||(array[i]=="09")){
+            propcrime+=1;
+            }
 }
 instream.setEncoding('UTF8');			//Setting encoding
 instream.on('data', function(chunk){
@@ -93,8 +95,7 @@ instream.on('data', function(chunk){
 								if((year<2017)&&(year>2000)){break;}
 							}
 						if(!((year<2017)&&(year>2000)))
-						 	{badlines.write(JSON.stringify([line]));
-						 	if(array.length>4)
+						 {if(array.length>4)
 						 	{	var tsc = array[2]							//Year Extraction
 						 		var arraytsc = tsc.split(" ")
 						 		if(typeof arraytsc[2] !== 'undefined')
@@ -107,13 +108,16 @@ instream.on('data', function(chunk){
 						 					}else {corrupted+=1}		
 						 		}else {corrupted+=1;}					 		
 						 	}}else{			datainputtheft(array,year)
-											datainputassault(array,year,yearcol-9)}
+											datainputassault(array,year,yearcol-9)
+											datainput2015(array,year,yearcol-3)}
 						 }else{				datainputtheft(array,year)
-											datainputassault(array,year,yearcol-9)}
+											datainputassault(array,year,yearcol-9)
+											datainput2015(array,year,yearcol-3)}
 										}	
 		else if ((year>2000)&&(year<2017)) //For normal lines
-			 {datainputtheft(array,year)
-			datainputassault(array,year,8)}
+			{datainputtheft(array,year)
+			 datainputassault(array,year,8)
+			 datainput2015(array,year,yearcol-3)}
 		})})
  		.on('end', function(){
  			for(var k =0 ; k<16; k++)
@@ -123,7 +127,6 @@ instream.on('data', function(chunk){
  				outstreamgraphassault.write(JSON.stringify(title, null, 2),'UTF8');																
  			}
  			title = {"Index Crime":indexcrime, "Non-Index Crime" : nonindexcrime  , "Violent Crime": violentcrime, "Property Crime": propcrime };
- 				outstreamgraph2015.write(JSON.stringify(title, null, 2),'UTF8');
- 				console.log(j)	
+ 				outstreamgraph2015.write(JSON.stringify(title, null, 2),'UTF8');	
  		})
  		
