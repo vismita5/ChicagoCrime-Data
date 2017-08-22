@@ -23,22 +23,24 @@ if(array[5]=="ASSAULT")
 			{	
 				if((array[i]=="false"))
 					{
-						final = {"ID":array[id], "YEAR" :year , "ARREST": array[i] } ;
+						final = {"ID":array[id], "YEAR" :year , "ARREST": 0 } ;
 						counterzeroassault[year-2001] += 1;
 					}
 				else if((array[i]=="true"))
 					{
-						final = {"ID":array[id], "YEAR" :year , "ARREST": array[i] } ;
+						final = {"ID":array[id], "YEAR" :year , "ARREST": 1 } ;
 						counteroneassault[year-2001] += 1;
 					}
-				else {
-						final = {"ID":array[id], "YEAR" :year , "ARREST": array[i] } ;
-						console.log(final);
+				else if(array[i+2]=="false"){
+						final = {"ID":array[id], "YEAR" :year , "ARREST": 0 } ;
+						counterzeroassault[year-2001] += 1;
 					}
-
-				//outstreamassault.write(JSON.stringify(final, null, 2),'UTF8')
+				else if(array[i+2]=="true"){
+						final = {"ID":array[id], "YEAR" :year , "ARREST": 1 } ;
+						counteroneassault[year-2001] += 1;
+					}else {console.log(array[i]);}
+				outstreamassault.write(JSON.stringify(final, null, 2),'UTF8')
 				countertotalassault[year-2001] += 1;
-				//console.log(final +" " + i);
 			}
 
 }
@@ -91,11 +93,11 @@ instreamassault.on('data', function(chunk){
 						 		{	corrupted+=1;}						 		
 						 	}}
 						 	else{
-												console.log( "here + " +array[yearcol-9]+" "+yearcol+"decr in i")
+												//console.log( array[0]+"here + " +array[yearcol-9]+" "+yearcol+"decr in i")
 											datainputassault(array,year,yearcol-9)}
 						 }
 						 	else {
-												console.log( "here + " +array[yearcol-9]+" "+yearcol +"incr in i")
+												//console.log( array[0]+"here + " +array[yearcol-9]+" "+yearcol +"incr in i")
 											datainputassault(array,year,yearcol-9)}}
 		else if ((year>2000)&&(year<2017)) //For normal lines
 			 datainputassault(array,year,8)
