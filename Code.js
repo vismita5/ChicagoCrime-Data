@@ -118,13 +118,21 @@ instream.on('data', function(chunk){
 			 datainput2015(array,year,yearcol-3)}
 		})})
  		.on('end', function(){
+ 			var theftcount= new Array()
+ 			var assaultcount = new Array() 
  			for(var k =0 ; k<16; k++)
  			{	title =  {"Year":k+2001, "More Than $500" : counteronetheft[k]  , "Less Than $500": counterzerotheft[k] };
- 				outstreamgraphtheft.write(JSON.stringify(title, null, 2),'UTF8');
- 				title = {"Year":k+2001, "Arrested" : counteroneassault[k]  , "Not Arrested": counterzeroassault[k] };
- 				outstreamgraphassault.write(JSON.stringify(title, null, 2),'UTF8');																
+ 				theftcount.push(title)
+ 				title = {"Year":k+2001, "Arrested" : counteroneassault[k]  , "NotArrested": counterzeroassault[k] };
+ 				assaultcount.push(title)														
  			}
- 			title = {"Index Crime":indexcrime, "Non-Index Crime" : nonindexcrime  , "Violent Crime": violentcrime, "Property Crime": propcrime };
- 				outstreamgraph2015.write(JSON.stringify(title, null, 2),'UTF8');	
+ 			var graph2015 = new Array()
+ 			title = {Label: "Index Crime", Value : indexcrime}; graph2015.push(title)
+ 			title = {Label: "Non-Index Crime", Value : nonindexcrime}; graph2015.push(title)
+ 			title = {Label: "Violent Crime", Value : violentcrime}; graph2015.push(title)
+ 			title = {Label: "Property Crime", Value : propcrime}; graph2015.push(title)
+ 				outstreamgraph2015.write(JSON.stringify(graph2015, null, 2),'UTF8');	
+ 				outstreamgraphtheft.write(JSON.stringify(theftcount, null, 2),'UTF8');
+ 				outstreamgraphassault.write(JSON.stringify(assaultcount, null, 2),'UTF8');		
  		})
  		
