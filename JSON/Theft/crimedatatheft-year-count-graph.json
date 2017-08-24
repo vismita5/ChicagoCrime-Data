@@ -1,0 +1,82 @@
+[
+  {
+    "Year": 2001,
+    "More Than $500": 35703,
+    "Less Than $500": 63449
+  },
+  {
+    "Year": 2002,
+    "More Than $500": 31807,
+    "Less Than $500": 66425
+  },
+  {
+    "Year": 2003,
+    "More Than $500": 25001,
+    "Less Than $500": 73784
+  },
+  {
+    "Year": 2004,
+    "More Than $500": 23512,
+    "Less Than $500": 71875
+  },
+  {
+    "Year": 2005,
+    "More Than $500": 23113,
+    "Less Than $500": 62487
+  },
+  {
+    "Year": 2006,
+    "More Than $500": 25236,
+    "Less Than $500": 60915
+  },
+  {
+    "Year": 2007,
+    "More Than $500": 26937,
+    "Less Than $500": 58144
+  },
+  {
+    "Year": 2008,
+    "More Than $500": 28741,
+    "Less Than $500": 59598
+  },
+  {
+    "Year": 2009,
+    "More Than $500": 25273,
+    "Less Than $500": 55619
+  },
+  {
+    "Year": 2010,
+    "More Than $500": 25298,
+    "Less Than $500": 51389
+  },
+  {
+    "Year": 2011,
+    "More Than $500": 18918,
+    "Less Than $500": 56129
+  },
+  {
+    "Year": 2012,
+    "More Than $500": 19848,
+    "Less Than $500": 55544
+  },
+  {
+    "Year": 2013,
+    "More Than $500": 19213,
+    "Less Than $500": 52224
+  },
+  {
+    "Year": 2014,
+    "More Than $500": 15493,
+    "Less Than $500": 45957
+  },
+  {
+    "Year": 2015,
+    "More Than $500": 12717,
+    "Less Than $500": 44424
+  },
+  {
+    "Year": 2016,
+    "More Than $500": 3571,
+    "Less Than $500": 12263
+  }
+]
