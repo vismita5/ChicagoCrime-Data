@@ -1,15 +1,12 @@
 var fs = require('fs');
-let countertotaltheft= new Array(16);  //Counter array for total Thefts in corresponding year 
-let counteronetheft= new Array(16);	  //Counter array for Thefts more than $500 in corresponding year
-let counterzerotheft= new Array(16);	  //Counter array for Thefts less than $500 in corresponding year
-let countertotalassault= new Array(16);  
-let counteroneassault= new Array(16);	  
-let counterzeroassault= new Array(16);	
-let violentcrime = 0;
-let indexcrime = 0;
-let nonindexcrime = 0;
-let propcrime =0;
-let totaldata=0;
+let countertotaltheft, counteronetheft, counterzerotheft, countertotalassault, counteroneassault, counterzeroassault;
+countertotaltheft= new Array(16);counteronetheft= new Array(16);counterzerotheft= new Array(16);countertotalassault= new Array(16);counteroneassault= new Array(16);counterzeroassault = new Array(16);
+let inTheft, inAssault, in2015;
+inTheft = new Array();
+inAssault= new Array();
+in2015 = new Array();
+let violentcrime, indexcrime, nonindexcrime, propcrime, total;
+violentcrime= indexcrime= nonindexcrime= propcrime= totaldata =0 
 for (var j = 0; j<16; j++)				//Initializing Counter array
     {	countertotaltheft[j]=0;
     	counteronetheft[j]=0;
@@ -33,7 +30,9 @@ function datainputtheft(array, year) {
     		var final = {"ID":array[0], "YEAR" :year , "ABOVE500": 1 } ;
     		counteronetheft[year-2001] += 1;}
     	countertotaltheft[year-2001] += 1;
-		outstreamtheft.write(JSON.stringify(final, null, 2),'UTF8') }
+		//outstreamtheft.write(JSON.stringify(final, null, 2),'UTF8')
+		inTheft.push(final)
+		 }
 	}
 function datainputassault(array, year,i) {
 if(array[5]=="ASSAULT")
@@ -49,7 +48,8 @@ if(array[5]=="ASSAULT")
 				else if(array[i+2]=="true"){
 						final = {"ID":array[0], "YEAR" :year , "ARREST": 1 } ;
 						counteroneassault[year-2001] += 1;}/*else {console.log(array[i-1]+" : "+array[i]+" : "+i);console.log(array)}*/
-				outstreamassault.write(JSON.stringify(final, null, 2),'UTF8')
+				//outstreamassault.write(JSON.stringify(final, null, 2),'UTF8')
+				inAssault.push(final)
 				countertotalassault[year-2001] += 1;							}		}
 function datainput2015(array, year, i) {
 if(year==2015)
@@ -126,12 +126,13 @@ instream.on('data', function(chunk){
  				title = {"Year":k+2001, "Arrested" : counteroneassault[k]  , "NotArrested": counterzeroassault[k] };
  				assaultcount.push(title)														
  			}
- 			var graph2015 = new Array()
- 			title = {Label: "Index Crime", Value : indexcrime}; graph2015.push(title)
- 			title = {Label: "Non-Index Crime", Value : nonindexcrime}; graph2015.push(title)
- 			title = {Label: "Violent Crime", Value : violentcrime}; graph2015.push(title)
- 			title = {Label: "Property Crime", Value : propcrime}; graph2015.push(title)
- 				outstreamgraph2015.write(JSON.stringify(graph2015, null, 2),'UTF8');	
+ 			title = {Label: "Index Crime", Value : indexcrime}; in2015.push(title)
+ 			title = {Label: "Non-Index Crime", Value : nonindexcrime}; in2015.push(title)
+ 			title = {Label: "Violent Crime", Value : violentcrime}; in2015.push(title)
+ 			title = {Label: "Property Crime", Value : propcrime}; in2015.push(title)
+ 				outstreamtheft.write(JSON.stringify(inTheft, null, 2),'UTF8')
+ 				outstreamassault.write(JSON.stringify(inAssault, null, 2),'UTF8')
+ 				outstreamgraph2015.write(JSON.stringify(in2015, null, 2),'UTF8');	
  				outstreamgraphtheft.write(JSON.stringify(theftcount, null, 2),'UTF8');
  				outstreamgraphassault.write(JSON.stringify(assaultcount, null, 2),'UTF8');		
  		})
